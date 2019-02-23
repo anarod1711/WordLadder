@@ -20,6 +20,7 @@ import java.io.*;
 public class Main {
 	
 	// static variables and constants only here.
+	static ArrayList<String> userInput; 
 	
 	public static void main(String[] args) throws Exception {
 		
@@ -35,14 +36,20 @@ public class Main {
 			ps = System.out;			// default output to Stdout
 		}
 		initialize();
-		
+
 		// TODO methods to read in words, output ladder
+		userInput = parse(kb);
+		ps.println(userInput); 
+		
 	}
 	
 	public static void initialize() {
 		// initialize your static variables or constants here.
 		// We will call this method before running our JUNIT tests.  So call it 
 		// only once at the start of main.
+		userInput = new ArrayList<String>(); 
+
+		
 	}
 	
 	/**
@@ -52,7 +59,19 @@ public class Main {
 	 */
 	public static ArrayList<String> parse(Scanner keyboard) {
 		// TO DO
-		return null;
+		String inputLine = keyboard.nextLine();
+		String delims = "[\\s\\t]+";
+		String[] tokens = inputLine.split(delims);
+		userInput.add(tokens[0]);
+		if(tokens.length == 2) {
+			userInput.add(tokens[1]);
+		}
+		else {
+			inputLine = keyboard.nextLine();
+			tokens = inputLine.split(delims); 
+			userInput.add(tokens[0]);
+		}
+		return userInput;
 	}
 	
 	public static ArrayList<String> getWordLadderDFS(String start, String end) {
