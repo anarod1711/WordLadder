@@ -21,6 +21,7 @@ public class Main {
 	
 	// static variables and constants only here.
 	static ArrayList<String> userInput; 
+	static ArrayList<String> ladder;
 	
 	public static void main(String[] args) throws Exception {
 		
@@ -40,6 +41,9 @@ public class Main {
 		// TODO methods to read in words, output ladder
 		userInput = parse(kb);
 		ps.println(userInput); 
+		ladder.add("Ana");
+		ladder.add("Megan");
+		printLadder(ladder);
 		
 	}
 	
@@ -48,7 +52,7 @@ public class Main {
 		// We will call this method before running our JUNIT tests.  So call it 
 		// only once at the start of main.
 		userInput = new ArrayList<String>(); 
-
+		ladder = new ArrayList <String>();
 		
 	}
 	
@@ -97,6 +101,9 @@ public class Main {
 	
 	public static void printLadder(ArrayList<String> ladder) {
 		
+		for (String step : ladder) {
+			System.out.println(step);
+		}
 	}
 	// TODO
 	// Other private static methods here
