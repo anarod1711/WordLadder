@@ -71,7 +71,7 @@ public class Main {
 			userInput.add(tokens[1]);
 		}
 		else {
-			inputLine = keyboard.nextLine();
+			inputLine = keyboard.next();
 			tokens = inputLine.split(delims); 
 			userInput.add(tokens[0]);
 		}
