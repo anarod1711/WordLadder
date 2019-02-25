@@ -70,7 +70,7 @@ public class Main {
 		if(tokens.length == 2) {
 			userInput.add(tokens[1]);
 		}
-		else {
+		while(userInput.size() != 2) {
 			inputLine = keyboard.next();
 			tokens = inputLine.split(delims); 
 			userInput.add(tokens[0]);
