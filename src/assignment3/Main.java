@@ -40,11 +40,15 @@ public class Main {
 
 		// TODO methods to read in words, output ladder
 		userInput = parse(kb);
-		ps.println(userInput); 
-		ladder.add("Ana");
-		ladder.add("Megan");
-		printLadder(ladder);
 		
+		if (!userInput.contains("/quit")) { // doesn't contain /quit command
+			ps.println(userInput); 
+			ladder.add("Ana");
+			ladder.add("Megan");
+			printLadder(ladder);
+		}
+		
+		//end program 
 	}
 	
 	public static void initialize() {
@@ -62,8 +66,17 @@ public class Main {
 	 * If command is /quit, return empty ArrayList. 
 	 */
 	public static ArrayList<String> parse(Scanner keyboard) {
-		// TO DO
-		String inputLine = keyboard.nextLine();
+		
+		//get start word
+		String start = keyboard.next().toLowerCase();
+		userInput.add(start);
+		
+		// check for /quit command
+		if (!userInput.get(0).equals("/quit")) { 			// isn't /quit command
+			String end = keyboard.next().toLowerCase();		// get end word
+			userInput.add(end);
+		}
+		/*
 		String delims = "[\\s\\t]+";
 		String[] tokens = inputLine.split(delims);
 		userInput.add(tokens[0]);
@@ -75,6 +88,8 @@ public class Main {
 			tokens = inputLine.split(delims); 
 			userInput.add(tokens[0]);
 		}
+		*/
+		
 		return userInput;
 	}
 	
