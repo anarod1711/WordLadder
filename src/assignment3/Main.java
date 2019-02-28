@@ -22,6 +22,10 @@ public class Main {
 	// static variables and constants only here.
 	static ArrayList<String> userInput; 
 	static ArrayList<String> ladder;
+	static ArrayList <String> bfsLadder;														//
+	static Set<String> dict;																	// remove?
+	static String[] arrayDict;																	//
+	static ArrayList<LinkedList<Node>> graph = makeGraph();								  	    //
 	
 	public static void main(String[] args) throws Exception {
 		
@@ -46,6 +50,7 @@ public class Main {
 			ladder.add("Ana");
 			ladder.add("Megan");
 			printLadder(ladder);
+			bfsLadder = getWordLadderBFS(userInput.get(0), userInput.get(1));					//
 		}
 		
 		//end program 
@@ -57,6 +62,12 @@ public class Main {
 		// only once at the start of main.
 		userInput = new ArrayList<String>(); 
 		ladder = new ArrayList <String>();
+		bfsLadder = new ArrayList <String>();													//
+		dict = makeDictionary();																//
+		arrayDict = dict.toArray(new String[dict.size()]); 										//
+		graph = makeGraph();																    //		
+																							
+
 		
 	}
 	
@@ -105,12 +116,37 @@ public class Main {
 	}
 	
     public static ArrayList<String> getWordLadderBFS(String start, String end) {
+    	
+  
+		Queue <Node> myQ = new LinkedList<>(); 
 		
-		// TODO some code
-		Set<String> dict = makeDictionary();
-		// TODO more code
-		
-		return null; // replace this line later with real return
+		int idx = find(start);						
+		if (idx != -1) {						
+			
+			myQ.add(graph.get(idx).element());				
+			graph.get(idx).getFirst().setVisited(true);		
+			
+			while (!myQ.isEmpty()) {
+				
+				Node curr = myQ.remove();				
+				
+				if (arrayDict[curr.getData()].equals(end)) {
+					bfsLadder.add(end);
+					return bfsLadder;
+				}
+				
+				bfsLadder.add(arrayDict[curr.getData()]);
+				
+				curr = curr.getNext();
+				while (curr != null) {
+					curr.setVisited(true);
+					myQ.add(graph.get(curr.getData()).element());
+					curr = curr.getNext();
+				}
+				
+			}
+		}
+		return bfsLadder; 
 	}
     
 	
@@ -120,9 +156,29 @@ public class Main {
 			System.out.println(step);
 		}
 	}
-	// TODO
-	// Other private static methods here
 
+	/**
+	 * Finds index of start word
+	 * @param String start word
+	 * @return -1 if not found, index of start 
+	 * word if found
+	 */																						//
+	public static int find(String start) {
+		
+		for (int i = 0; i < arrayDict.length; i++) {
+			if (arrayDict[i].equals(start)) {
+				
+			}
+		}
+		return -1; // not found
+	}
+																							//
+	public static ArrayList<LinkedList<Node>> makeGraph(){
+		ArrayList<LinkedList<Node>> tempGraph = new ArrayList<>();
+		
+		
+	}
+	
 
 	/* Do not modify makeDictionary */
 	public static Set<String>  makeDictionary () {
