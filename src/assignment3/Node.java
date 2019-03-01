@@ -5,14 +5,10 @@ public class Node {
 	private boolean visited;
 	private Node next;
 	
-	Node() {
-		data = "";
+	Node(String s) {
+		data = s.toLowerCase();
 		visited = false;
 		next = null;
-	}
-	
-	public void setData(String s) {
-		data = s;
 	}
 	
 	public String getData() {

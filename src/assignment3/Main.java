@@ -25,7 +25,7 @@ public class Main {
 	static ArrayList <String> bfsLadder;														//
 	static Set<String> dict;																	// remove?
 	static String[] arrayDict;																	//
-	static ArrayList<LinkedList<Node>> graph;											  	    //
+	static ArrayList<LinkedList<String>> graph;											  	    //
 	static LinkedList<Node> dictionaryLL; 
 	
 	public static void main(String[] args) throws Exception {
@@ -64,7 +64,7 @@ public class Main {
 		ladder = new ArrayList<String>();
 		bfsLadder = new ArrayList<String>();													//
 		dictionaryLL = new LinkedList<Node>();
-		graph = new ArrayList<LinkedList<Node>>();
+		graph = new ArrayList<LinkedList<String>>();
 		
 		
 		dictionaryLL = makeLinkedListDict();
@@ -193,34 +193,53 @@ public class Main {
 		return -1; // not found
 	}
 																							//
-	public static ArrayList<LinkedList<Node>> makeGraph(){
-		String word = userInput.get(0);
+	public static ArrayList<LinkedList<String>> makeGraph(){
+		// get start word and convert to char array
+		String word = userInput.get(0); 
 		char[] startArray = userInput.get(0).toCharArray(); 
-		int idx = 0; 
-		//add first linked list
-		graph.add(0, new LinkedList<Node>()); 
+		int idx = 0; // pos to add new linked list
+		Set <String> wordsInArrayList = new HashSet<String>(); // words added to array list
 		
-		//add start to as first node 
-		graph.get(0).add(new Node(word));
+		//create first linked list, add start word to it
+		graph.add(0, new LinkedList<String>()); 
+		graph.get(0).add(word);
+		wordsInArrayList.add(word);
 		
-		for(int i = 0; i < userInput.get(0).length(); i++) {
-			for(char j = 'a'; j < 'z'; j++) {
-				startArray[i] = j;
-				word = startArray.toString();
+		for (int LL = 0; LL < graph.size(); LL++) { // iterates through ArrayList (head of LinkedList)
+			for(int i = 0; i < userInput.get(0).length(); i++) { // iterates through pos in string
 				
-				//add word to graph if it exists in dictionary
-				for(int k = 0; k < dictionaryLL.size(); k++) {
-					if(dictionaryLL.get(k).equals(word)) {
-						graph.get(k).add(new Node(word));
-					}
+				// preserve o.g. array when move pos
+				char [] changeOne = Arrays.copyOf(startArray, startArray.length);
+				for(char j = 'a'; j <= 'z'; j++) { // change pos a-z 
+					changeOne[i] = j;
+					word = changeOne.toString();
+					
+					/*
+					//add word to graph if it exists in dictionary
+					for(int k = 0; k < dictionaryLL.size(); k++) {
+						if(dictionaryLL.get(k).equals(word)) {
+							graph.get(k).add(new Node(word));
+						}
+					*/
+						if (dict.contains(word)) { // set they made for us
+							graph.get(LL).add(word); // add word to current linked list (LL)
+							
+							if (!wordsInArrayList.contains(word)) {
+								idx ++;
+								graph.add(idx, new LinkedList<String>());
+								graph.get(idx).add(word);
+							}
+						}
+									
 				}
-								
+				
+				//fix how to get next word in graph to make new node
+				/* implemented ^ in second if in j inner for loop
+				word = graph.get(i).get(graph.get(idx));
+				graph.add(i, new LinkedList<Node>());
+				*/
+				
 			}
-			idx = idx + 1; 
-			//fix how to get next word in graph to make new node
-			word = graph.get(i).get(graph.get(idx));
-			graph.add(i, new LinkedList<Node>());
-			
 		}
 		
 		return graph;
