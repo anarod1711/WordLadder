@@ -6,7 +6,7 @@ public class Node {
 	private Node next;
 	
 	Node(String s) {
-		data = s.toLowerCase();
+		data = s;
 		visited = false;
 		next = null;
 	}
