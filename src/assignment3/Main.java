@@ -136,8 +136,35 @@ public class Main {
 		// TODO some code
 		Set<String> dict = makeDictionary();
 		// TODO more code
+		Set <String> discovered = new HashSet<>();
+//		LinkedList<String>[] paths; 
+		ArrayList<String> path = new ArrayList<>();
 		
-		return null; // replace this line later with real return
+		ladder.add(start); 
+		getWordLadderDFSHelper(start, end, discovered, path);
+		
+		return ladder; // replace this line later with real return
+	}
+	
+	public static void getWordLadderDFSHelper(String current, String end, Set<String> discovered, ArrayList<String> path){
+		
+		if(current == null) {
+			return; 
+		}
+		discovered.add(current);
+		path.add(current);
+		if(current == end)
+			return;
+		else {
+			for(String word : graph.get(wordsAdded.indexOf(current))) {
+				if (!discovered.contains(word)) {
+					getWordLadderDFSHelper(word, end, discovered, path); 
+					return;
+				}
+			}
+			path.remove(current);
+			return;
+		}
 	}
 	
     public static ArrayList<String> getWordLadderBFS(String start, String end) {
