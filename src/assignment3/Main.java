@@ -27,6 +27,7 @@ public class Main {
 	static String[] arrayDict;																	//
 	static ArrayList<LinkedList<String>> graph;											  	    //
 	static LinkedList<Node> dictionaryLL; 
+	static ArrayList<String> wordsAdded;
 	
 	public static void main(String[] args) throws Exception {
 		
@@ -43,14 +44,15 @@ public class Main {
 		}
 		initialize();
 		// TODO methods to read in words, output ladder
-//		userInput = parse(kb);
-		
-		if (!userInput.contains("/quit")) { // doesn't contain /quit command
+		userInput = parse(kb);
+		graph = makeGraph();
+		if (!userInput.contains("/QUIT")) { // doesn't contain /quit command
 			ps.println(userInput); 
 			ladder.add("Ana");
 			ladder.add("Megan");
 			printLadder(ladder);
 			bfsLadder = getWordLadderBFS(userInput.get(0), userInput.get(1));					//
+			printLadder(bfsLadder);
 		}
 		
 		//end program 
@@ -66,9 +68,9 @@ public class Main {
 		dictionaryLL = new LinkedList<Node>();
 		graph = new ArrayList<LinkedList<String>>();
 		
-		
+		wordsAdded = new ArrayList<String>();
 		dictionaryLL = makeLinkedListDict();
-		graph = makeGraph();																    //		
+																		    //		
 																							
 	}
 	
@@ -102,12 +104,12 @@ public class Main {
 	public static ArrayList<String> parse(Scanner keyboard) {
 		
 		//get start word
-		String start = keyboard.next().toLowerCase();
+		String start = keyboard.next().toUpperCase();
 		userInput.add(start);
 		
 		// check for /quit command
-		if (!userInput.get(0).equals("/quit")) { 			// isn't /quit command
-			String end = keyboard.next().toLowerCase();		// get end word
+		if (!userInput.get(0).equals("/QUIT")) { 			// isn't /quit command
+			String end = keyboard.next().toUpperCase();	// get end word 
 			userInput.add(end);
 		}
 		/*
@@ -139,38 +141,46 @@ public class Main {
 	}
 	
     public static ArrayList<String> getWordLadderBFS(String start, String end) {
-    	
-//  
-//		Queue <Node> myQ = new LinkedList<>(); 
-//		
-//		int idx = find(start);						
-//		if (idx != -1) {						
-//			
-//			myQ.add(graph.get(idx).element());				
-//			graph.get(idx).getFirst().setVisited(true);		
-//		
-//			//check if visited!
-//			
-//			while (!myQ.isEmpty()) {
-//				
-//				Node curr = myQ.remove();				
-//				
-//				if (arrayDict[curr.getData()].equals(end)) {
-//					bfsLadder.add(end);
-//					return bfsLadder;
-//				}
-//				
-//				bfsLadder.add(arrayDict[curr.getData()]);
-//				
-//				curr = curr.getNext();
-//				while (curr != null) {
-//					curr.setVisited(true);
-//					myQ.add(graph.get(curr.getData()).element());
-//					curr = curr.getNext();
-//				}
-//				
-//			}
-//		}
+    	//dictionaryLL = makeLinkedListDict();
+		Queue <String> myQ = new LinkedList<>(); 
+		Set <String> discovered = new HashSet<>();
+										
+		
+		myQ.add(graph.get(0).getFirst());	
+		discovered.add(graph.get(0).getFirst());
+		//bfsLadder.add(graph.get(0).getFirst());
+		//graph.get(idx).getFirst().setVisited(true);		
+	
+		//check if visited!
+		
+		while (!myQ.isEmpty()) {
+			
+			String curr = myQ.remove();				
+			
+			if (curr.equals(end)) {
+				bfsLadder.add(end);
+				return bfsLadder;
+			}
+			
+			bfsLadder.add(curr);
+			
+			for (String word : graph.get(wordsAdded.indexOf(curr))) {
+				System.out.println(graph.get(wordsAdded.indexOf(curr)));
+				if (!discovered.contains(word)) {
+					discovered.add(word);
+					myQ.add(word);
+				}
+			}
+			/*
+			while (curr != null) {
+				curr.setVisited(true);
+				myQ.add(graph.get(curr.getData()).element());
+				curr = curr.getNext();
+			}
+			*/
+			
+		}
+		
 		return bfsLadder; 
 	}
     
@@ -205,24 +215,23 @@ public class Main {
 		String word = userInput.get(0); 
 		
 		int idx = 0; // pos to add new linked list
-		Set <String> wordsInArrayList = new HashSet<String>(); // words added to array list
 		
 		//create first linked list, add start word to it
 		graph.add(0, new LinkedList<String>()); 
 		graph.get(0).add(word);
-		wordsInArrayList.add(word);
+		wordsAdded.add(word);
 		
 		
 		for (int LL = 0; LL < graph.size(); LL++) {
 			word = graph.get(LL).getFirst();
 			for(String dictWord : arrayDict) {
 				if(differByOne(word, dictWord)) {
-					graph.get(LL).add(dictWord); // add word to current linked list (LL)
-					if(!wordsInArrayList.contains(dictWord)) { //add dictWord as new head if not yet created
+					graph.get(LL).addLast(dictWord); // add word to current linked list (LL)
+					if(!wordsAdded.contains(dictWord)) { //add dictWord as new head if not yet created
 						idx++;
 						graph.add(idx, new LinkedList<String>());
 						graph.get(idx).add(dictWord);
-						wordsInArrayList.add(dictWord);
+						wordsAdded.add(dictWord);
 					}
 				}
 			}	
