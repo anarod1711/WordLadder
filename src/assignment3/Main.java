@@ -22,7 +22,8 @@ public class Main {
 	// static variables and constants only here.
 	static ArrayList<String> userInput; 
 	static ArrayList<String> ladder;
-	static ArrayList <String> bfsLadder;														//
+	static ArrayList <String> bfsLadder;
+	static ArrayList <String> dfsLadder;
 	static Set<String> dict;																	// remove?
 	static String[] arrayDict;																	//
 	static ArrayList<LinkedList<String>> graph;											  	    //
@@ -48,9 +49,6 @@ public class Main {
 		graph = makeGraph();
 		if (!userInput.contains("/QUIT")) { // doesn't contain /quit command
 			ps.println(userInput); 
-			ladder.add("Ana");
-			ladder.add("Megan");
-			printLadder(ladder);
 			bfsLadder = getWordLadderBFS(userInput.get(0), userInput.get(1));					//
 			printLadder(bfsLadder);
 		}
@@ -64,7 +62,8 @@ public class Main {
 		// only once at the start of main.
 		userInput = new ArrayList<String>(); 
 		ladder = new ArrayList<String>();
-		bfsLadder = new ArrayList<String>();													//
+		bfsLadder = new ArrayList<String>();
+		dfsLadder = new ArrayList<String>();
 		dictionaryLL = new LinkedList<Node>();
 		graph = new ArrayList<LinkedList<String>>();
 		
@@ -84,14 +83,7 @@ public class Main {
 		}
 
 		arrayDict = dict.toArray(new String[dict.size()]); 										//
-//
-//		for (String step : arrayDict) {
-//			System.out.println(step);
-//		}
-		
-//		for (Node step : dictionaryLL) {
-//			System.out.println(step.getData());
-//		}
+
 		
 		return dictionaryLL; 
 		
@@ -112,19 +104,7 @@ public class Main {
 			String end = keyboard.next().toUpperCase();	// get end word 
 			userInput.add(end);
 		}
-		/*
-		String delims = "[\\s\\t]+";
-		String[] tokens = inputLine.split(delims);
-		userInput.add(tokens[0]);
-		if(tokens.length == 2) {
-			userInput.add(tokens[1]);
-		}
-		while(userInput.size() != 2) {
-			inputLine = keyboard.next();
-			tokens = inputLine.split(delims); 
-			userInput.add(tokens[0]);
-		}
-		*/
+
 		
 		return userInput;
 	}
@@ -133,78 +113,76 @@ public class Main {
 		
 		// Returned list should be ordered start to end.  Include start and end.
 		// If ladder is empty, return list with just start and end.
-		// TODO some code
-		Set<String> dict = makeDictionary();
-		// TODO more code
+
+
 		Set <String> discovered = new HashSet<>();
-//		LinkedList<String>[] paths; 
-		ArrayList<String> path = new ArrayList<>();
 		
-		ladder.add(start); 
-		getWordLadderDFSHelper(start, end, discovered, path);
+		if (getWordLadderDFSHelper(start, end, discovered, dfsLadder)) {
+			return dfsLadder;
+		}
 		
-		return ladder; // replace this line later with real return
+		dfsLadder.add(start);
+		dfsLadder.add(end);
+		return dfsLadder; // replace this line later with real return
 	}
 	
-	public static void getWordLadderDFSHelper(String current, String end, Set<String> discovered, ArrayList<String> path){
+	public static boolean getWordLadderDFSHelper(String current, String end, Set<String> discovered, ArrayList<String> path){
 		
-		if(current == null) {
-			return; 
-		}
 		discovered.add(current);
 		path.add(current);
-		if(current == end)
-			return;
+		
+		if(current.equals(end)) {
+			return true;
+		}
+		
 		else {
 			for(String word : graph.get(wordsAdded.indexOf(current))) {
 				if (!discovered.contains(word)) {
-					getWordLadderDFSHelper(word, end, discovered, path); 
-					return;
+					if (getWordLadderDFSHelper(word, end, discovered, path)) {
+						return true;
+					}
 				}
 			}
 			path.remove(current);
-			return;
+			return false;
 		}
 	}
 	
     public static ArrayList<String> getWordLadderBFS(String start, String end) {
-    	//dictionaryLL = makeLinkedListDict();
+    	
 		Queue <String> myQ = new LinkedList<>(); 
 		Set <String> discovered = new HashSet<>();
 										
+		ArrayList<ArrayList<String>> paths;
 		
 		myQ.add(graph.get(0).getFirst());	
 		discovered.add(graph.get(0).getFirst());
-		//bfsLadder.add(graph.get(0).getFirst());
-		//graph.get(idx).getFirst().setVisited(true);		
-	
-		//check if visited!
+
 		
 		while (!myQ.isEmpty()) {
 			
 			String curr = myQ.remove();				
 			
-			if (curr.equals(end)) {
-				bfsLadder.add(end);
-				return bfsLadder;
-			}
 			
 			bfsLadder.add(curr);
 			
+			boolean useful = false;
 			for (String word : graph.get(wordsAdded.indexOf(curr))) {
-				System.out.println(graph.get(wordsAdded.indexOf(curr)));
 				if (!discovered.contains(word)) {
+					
+					if (word.equals(end)) {
+						bfsLadder.add(end);
+						return bfsLadder;
+					}
+					
 					discovered.add(word);
 					myQ.add(word);
+					useful = true;
 				}
 			}
-			/*
-			while (curr != null) {
-				curr.setVisited(true);
-				myQ.add(graph.get(curr.getData()).element());
-				curr = curr.getNext();
-			}
-			*/
+			
+			if (!useful) bfsLadder.remove(curr);
+			
 			
 		}
 		
@@ -219,21 +197,6 @@ public class Main {
 		}
 	}
 
-	/**
-	 * Finds index of start word
-	 * @param String start word
-	 * @return -1 if not found, index of start 
-	 * word if found
-	 */																						//
-	public static int find(String start) {
-		
-		for (int i = 0; i < arrayDict.length; i++) {
-			if (arrayDict[i].equals(start)) {
-				
-			}
-		}
-		return -1; // not found
-	}
 																							//
 	public static ArrayList<LinkedList<String>> makeGraph(){
 		
@@ -247,6 +210,7 @@ public class Main {
 		graph.add(0, new LinkedList<String>()); 
 		graph.get(0).add(word);
 		wordsAdded.add(word);
+		Arrays.sort(arrayDict);
 		
 		
 		for (int LL = 0; LL < graph.size(); LL++) {
