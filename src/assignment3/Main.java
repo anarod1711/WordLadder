@@ -8,7 +8,7 @@
  * <ar55665>
  * <16225>
  * Slip days used: <0>
- * Git URL: 
+ * Git URL: https://github.com/EE422C/project-3-wordladder-pair-69.git
  * Spring 2019
  */
 
@@ -31,7 +31,7 @@ public class Main {
 	
 	public static void main(String[] args) throws Exception {
 		
-		Scanner kb;	// input Scanner for commands
+		Scanner kb;		// input Scanner for commands
 		PrintStream ps;	// output file, for student testing and grading only
 		// If arguments are specified, read/write from/to files instead of Std IO.
 		if (args.length != 0) {
@@ -49,7 +49,7 @@ public class Main {
 		// IF not quit command	
 		if (!userInput.isEmpty()) { 				
 			printLadder(getWordLadderBFS(userInput.get(0), userInput.get(1)));
-			//printLadder(getWordLadderDFS(userInput.get(0), userInput.get(1)));
+			printLadder(getWordLadderDFS(userInput.get(0), userInput.get(1)));
 		}
 		
 		//end program 
@@ -62,9 +62,7 @@ public class Main {
 		// only once at the start of main.
 		userInput = new ArrayList<String>(); 
 		bfsLadder = new ArrayList<String>();
-		dfsLadder = new ArrayList<String>();
-		graph = new ArrayList<LinkedList<String>>();
-		wordsAdded = new ArrayList<String>();	
+		dfsLadder = new ArrayList<String>();	
 		dict = makeDictionary();							
 																							
 	}
@@ -78,7 +76,7 @@ public class Main {
 		
 		String start = keyboard.next().toUpperCase();	// get start word
 		 
-		if (start == "/QUIT") return userInput;			// return empty ArrayList
+		if (start.equals("/QUIT")) return userInput;			// return empty ArrayList
 		
 		String end = keyboard.next().toUpperCase();		// get end word 
 		
@@ -102,6 +100,7 @@ public class Main {
 		
 		// IF both words in dictionary, begin search
 		if (dict.contains(start) && dict.contains(end)) {
+			graph = new ArrayList<LinkedList<String>>();
 			graph = makeGraph(start);					// make graph based on start word
 			sortGraph(graph, end);
 			
@@ -162,6 +161,7 @@ public class Main {
 		
     	//check word existance
     	if (dict.contains(start) && dict.contains(end)) {
+    		graph = new ArrayList<LinkedList<String>>();
     		graph = makeGraph(start);
     		sortGraph(graph, end);
     		
@@ -232,7 +232,8 @@ public class Main {
 		
 		// ladder exists
 		if (ladder.size() > 2) { 
-			System.out.println("a " + ladder.size() + "-rung word ladder exists between " + ladder.get(0).toLowerCase() + " and " + ladder.get(ladder.size() - 1).toLowerCase() + ".");
+			int size = ladder.size() - 2;
+			System.out.println("a " + size + "-rung word ladder exists between " + ladder.get(0).toLowerCase() + " and " + ladder.get(ladder.size() - 1).toLowerCase() + ".");
 			for (String step : ladder) {
 				System.out.println(step.toLowerCase());
 			}
@@ -250,9 +251,10 @@ public class Main {
 	 * @return ArrayList of linked list graph
 	 */																					
 	public static ArrayList<LinkedList<String>> makeGraph(String start){
-			
+		
 		// get start word and convert to char array
 		String word = start;
+		wordsAdded = new ArrayList<String>();
 		
 		int idx = 0; // pos to add new linked list
 		
@@ -262,8 +264,8 @@ public class Main {
 		wordsAdded.add(word);
 		
 		// other stuff needed
-		arrayDict = dict.toArray(new String[dict.size()]); 	// transform to array (easily accessible)
-		Arrays.sort(arrayDict);									
+		arrayDict = dict.toArray(new String[dict.size()]); 	// transform to array (easily accessible)									
+		//Arrays.sort(arrayDict); <-- whoa, this hinders it, surprisingly
 		
 		// populate
 		for (int LL = 0; LL < graph.size(); LL++) {
@@ -347,6 +349,7 @@ public class Main {
 		for (int i = 1; i < weight.length; i ++) {
 			weight[i] = countSimilarities(wordWeight[i], endWord);  // counts similarities
 		}
+		
 		
 		// re-ordering LL from G to L similarities to end Word
 		for (int i = 2; i < weight.length; i++) {
